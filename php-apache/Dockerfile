@@ -1,5 +1,7 @@
 FROM php:7.2.11-apache
 
+WORKDIR /var/www/html
+
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 
@@ -18,6 +20,8 @@ RUN apt-get update && apt-get install -y \
     libssl-dev libxml2-dev libpng-dev libzip-dev libxml2-dev libmcrypt-dev libcurl4-openssl-dev libsodium-dev pkg-config \
     libwebp-dev libjpeg62-turbo-dev libxpm-dev libfreetype6-dev libxslt-dev libbz2-dev
 #    xvfb libfontconfig xfonts-75dpi fontconfig libjpeg62-turbo libxrender1
+
+COPY . /var/www/html/
 
 #
 #RUN echo "FromLineOverride=YES" >> /etc/ssmtp/ssmtp.conf && \
@@ -39,7 +43,9 @@ RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.t
 && cd libsodium-1.0.18 && \
     ./configure && \
     make && make check && \
-    make install
+    make install && \
+    rm -rf libsodium-1.0.18.tar.gz && \
+    rm -rf libsodium-1.0.18
 
 RUN docker-php-ext-configure gd --with-gd --with-webp-dir --with-jpeg-dir=DIR \
     --with-png-dir=DIR --with-zlib-dir --with-freetype-dir
@@ -56,7 +62,7 @@ RUN curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpu
 #COPY cert/server.crt /etc/apache2/ssl/server.crt
 #COPY cert/server.key /etc/apache2/ssl/server.key
 
-RUN printf '<VirtualHost *:80> \n DocumentRoot /var/www/html \n ServerName %s \n ServerAlias %s \n</VirtualHost>' ${SERVER_NAME} ${SERVER_ALIAS} > /etc/apache2/sites-available/webapp.conf
+RUN printf '<VirtualHost *:80> \n DocumentRoot /var/www/html/app \n</VirtualHost>' > /etc/apache2/sites-available/webapp.conf
 
 RUN rm /etc/apache2/sites-available/000-default.conf \
     && rm /etc/apache2/sites-available/default-ssl.conf \

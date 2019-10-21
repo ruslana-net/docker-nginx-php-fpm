@@ -30,7 +30,7 @@ case $@ in
           ;;
      delete) # Delete all containers and images
           docker rm -f $(docker ps -aq)
-          docker rmi $(docker images -q)
+          docker rmi -f $(docker images -q)
           ;;
      top) # Check CPU consumption
           docker stats $(docker inspect -f "{{ .Name }}" $(docker ps -q))
