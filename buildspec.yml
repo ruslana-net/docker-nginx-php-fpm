@@ -22,7 +22,6 @@ phases:
     - echo Build completed on `date`
     - echo Pushing the Docker images...
     - docker-compose push
-    - docker push $REPOSITORY_URI:mysql
     - echo Writing image definitions file...
     - printf '[{"name":"web","imageUri":"%s"}, {"name":"mysql","imageUri":"%s"} ]' $REPOSITORY_URI:web  $REPOSITORY_URI:mysql > imagedefinitions.json
 artifacts:
