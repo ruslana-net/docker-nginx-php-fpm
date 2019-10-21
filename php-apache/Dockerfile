@@ -6,7 +6,7 @@ ENV APACHE_RUN_GROUP www-data
 ARG TIMEZONE
 ARG ENVIRONMENT
 ARG SERVER_NAME
-ARG SERVER_ALIASES
+ARG SERVER_ALIAS
 
 RUN apt-get update && apt-get install -y \
     openssl \
@@ -56,7 +56,7 @@ RUN curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpu
 #COPY cert/server.crt /etc/apache2/ssl/server.crt
 #COPY cert/server.key /etc/apache2/ssl/server.key
 
-RUN printf '<VirtualHost *:80> \n DocumentRoot /var/www/html \n ServerName %s \n ServerAlias %s \n</VirtualHost>', ${SERVER_NAME} ${SERVER_ALIAS} > /etc/apache2/sites-available/webapp.conf
+RUN printf '<VirtualHost *:80> \n DocumentRoot /var/www/html \n ServerName %s \n ServerAlias %s \n</VirtualHost>' ${SERVER_NAME} ${SERVER_ALIAS} > /etc/apache2/sites-available/webapp.conf
 
 RUN rm /etc/apache2/sites-available/000-default.conf \
     && rm /etc/apache2/sites-available/default-ssl.conf \

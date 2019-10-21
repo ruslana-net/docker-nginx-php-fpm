@@ -1,0 +1,29 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+    - echo Logging in to Amazon ECR...
+    - aws --version
+    - $(aws ecr get-login --region ${DEFAULT_REGION} --no-include-email)
+    - REPOSITORY_URI=${ECR_REPOSITORY}
+    - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+    - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+    - echo Build started on `date`
+    - echo Building the Docker image...
+    - docker-compose build
+    - docker images
+  post_build:
+    commands:
+    - echo Build completed on `date`
+    - echo Pushing the Docker images...
+    - docker-compose push
+    - docker push $REPOSITORY_URI:mongo
+    - echo Writing image definitions file...
+    - printf '[{"name":"web","imageUri":"%s"}, {"name":"mysql","imageUri":"%s"} ]' $REPOSITORY_URI:web  $REPOSITORY_URI:mysql > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

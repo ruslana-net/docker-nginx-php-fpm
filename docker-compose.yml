@@ -1,6 +1,7 @@
 version: '3'
 services:
   web:
+    image: ${ECR_REPOSITORY}:web
     depends_on:
       - mysql
     env_file: ./.env
@@ -20,6 +21,7 @@ services:
       - ./app:/var/www/html
       - ./php-apache/cert:/etc/apache2/ssl/
   mysql:
+    image: ${ECR_REPOSITORY}:mysql
     build:
       context: mysql
     env_file: .env
