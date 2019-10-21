@@ -5,6 +5,8 @@ ENV APACHE_RUN_GROUP www-data
 
 ARG TIMEZONE
 ARG ENVIRONMENT
+ARG SERVER_NAME
+ARG SERVER_ALIASES
 
 RUN apt-get update && apt-get install -y \
     openssl \
@@ -22,8 +24,7 @@ RUN apt-get update && apt-get install -y \
 #    echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-&& composer --version
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set timezone
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone \
@@ -55,18 +56,12 @@ RUN curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpu
 #COPY cert/server.crt /etc/apache2/ssl/server.crt
 #COPY cert/server.key /etc/apache2/ssl/server.key
 
-RUN echo '<VirtualHost *:80> \
-             DocumentRoot "/var/www/html/" \
-             ServerName ${APACHE_SERVER_NAME} \
-             ServerAlias ${APACHE_SERVER_ALIAS} \
-         </VirtualHost>' > /etc/apache2/sites-available/webapp.conf
+RUN printf '<VirtualHost *:80> \n DocumentRoot /var/www/html \n ServerName %s \n ServerAlias %s \n </VirtualHost>' $SERVER_NAME $SERVER_ALIASES > /etc/apache2/sites-available/webapp.conf
 
 RUN rm /etc/apache2/sites-available/000-default.conf \
     && rm /etc/apache2/sites-available/default-ssl.conf \
     && ln -s /etc/apache2/sites-available/*.conf /etc/apache2/sites-enabled/ \
     && rm /etc/apache2/sites-enabled/000-default.conf
-
-RUN mkdir ../.composer && mkdir ../.composer/cache && chown -R 1000:www-data ../.composer
 
 RUN a2enmod rewrite
 RUN a2enmod ssl
