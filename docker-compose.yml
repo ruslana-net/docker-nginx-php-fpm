@@ -4,7 +4,6 @@ services:
     image: ${ECR_REPOSITORY}:web
     depends_on:
       - mysql
-    env_file: ./.env
     build:
       context: php-apache
       args:
@@ -24,7 +23,6 @@ services:
     image: ${ECR_REPOSITORY}:mysql
     build:
       context: mysql
-    env_file: .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
