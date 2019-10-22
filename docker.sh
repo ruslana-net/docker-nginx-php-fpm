@@ -42,7 +42,7 @@ case $@ in
           docker-compose ${DOCKER_COMPOSE_FILES} ps
           ;;
      php*) # Check CPU consumption
-          docker-compose ${DOCKER_COMPOSE_FILES} exec web $@
+          docker-compose ${DOCKER_COMPOSE_FILES} exec php $@
           ;;
      mysql*|mysqldump*|mysqladmin*) # Check CPU consumption
           docker-compose ${DOCKER_COMPOSE_FILES} exec mysql $@
