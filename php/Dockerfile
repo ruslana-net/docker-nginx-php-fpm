@@ -15,3 +15,5 @@ RUN apt-get update && apt-get install -y \
     pkg-config
 
 COPY ./app /code
+
+EXPOSE 9000
