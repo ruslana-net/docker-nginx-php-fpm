@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: ${ECR_REPOSITORY}:nginx
+    image: ${ECR_REPOSITORY}:web
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
