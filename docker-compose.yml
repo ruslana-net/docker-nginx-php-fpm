@@ -9,6 +9,8 @@ services:
       - "80:80"
     links:
       - php
+    volumes:
+      - ${PROJECT_DIRECTORY}:/code
   php:
 #    image: ${ECR_REPOSITORY}:php
     build:
